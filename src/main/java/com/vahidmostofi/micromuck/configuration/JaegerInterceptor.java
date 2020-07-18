@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-@Component
+//@Service
 public class JaegerInterceptor implements HandlerInterceptor {
 
     //unimplemented methods comes here. Define the following method so that it

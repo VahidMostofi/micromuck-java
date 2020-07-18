@@ -40,8 +40,8 @@ public class MicroController {
 
     @GetMapping("/")
     ResponseEntity<MicroResult>  get(HttpServletRequest request, @RequestHeader HttpHeaders headers){
-        SpanContext parentContext = ((Span)request.getAttribute("controller")).context();
-        Span span = jaeger.getTracer().buildSpan(serviceName).asChildOf(parentContext).start();
+        SpanContext parentContext = ((Span)request.getAttribute("span")).context();
+        Span span = jaeger.getTracer().buildSpan("controller").asChildOf(parentContext).start();
 
         // behaviour of each service for now is pre-sub-request, sub-request, post-sub-request
         microService.PreRequestBehaviour();
