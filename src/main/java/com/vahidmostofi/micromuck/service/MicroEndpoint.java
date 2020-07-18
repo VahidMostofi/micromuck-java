@@ -2,23 +2,23 @@ package com.vahidmostofi.micromuck.service;
 
 public class MicroEndpoint {
 
-    private float prob;
+    private int prob;
     private String path;
 
     public MicroEndpoint(){
 
     }
 
-    public MicroEndpoint(float prob, String path) {
+    public MicroEndpoint(int prob, String path) {
         this.prob = prob;
         this.path = path;
     }
 
-    public float getProb() {
+    public int getProb() {
         return prob;
     }
 
-    public void setProb(float prob) {
+    public void setProb(int prob) {
         this.prob = prob;
     }
 
