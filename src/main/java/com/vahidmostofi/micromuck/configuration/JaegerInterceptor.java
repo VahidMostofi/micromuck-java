@@ -63,6 +63,7 @@ public class JaegerInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,@Nullable ModelAndView modelAndView) throws Exception {
+        System.out.println(((Span)request.getAttribute("span")).toString());
         ((Span)request.getAttribute("span")).finish();
     }
 

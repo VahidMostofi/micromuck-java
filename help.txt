@@ -1,0 +1,9 @@
+docker container run -p 8080:8080 \
+-e SERVICE_NAME='service-name' \
+-e PRE_REQUEST='uniform(50,80)' \
+-e POST_REQUEST='uniform(30,40)' \
+-e SEED='2' \
+-e ENDPOINTS='50;http://localhost:8080/' \
+-e JAEGER_HOST='172.17.0.3' \
+-e JAEGER_AGENT_HOST='172.17.0.3' \
+vahidmostofi/micromuck:dev-v1

@@ -115,16 +115,8 @@ public class MicroService {
 
     private void behave(String code){
         if (code.startsWith("uniform")){ //uniform(100,200)
-            int min = Integer.parseInt(code.substring("uniform".length()+1, code.length()-1).split(",")[0]);
-            int max = Integer.parseInt(code.substring("uniform".length()+1, code.length()-1).split(",")[1]);
-            int duration = r.nextInt(max-min) + min;
-            long start = System.currentTimeMillis();
-            while(true){
-                long current = System.currentTimeMillis();
-                if (start + duration < current){
-                    break;
-                }
-            }
+            int n = Integer.parseInt(code);
+            isPrime(n);
         }
     }
 
@@ -144,5 +136,19 @@ public class MicroService {
         public void put(String key, String value) {
             builder.addHeader(key, value);
         }
+    }
+
+    static boolean isPrime(int n)
+    {
+        // Corner case
+        if (n <= 1)
+            return false;
+
+        // Check from 2 to n-1
+        for (int i = 2; i < n; i++)
+            if (n % i == 0)
+                return false;
+
+        return true;
     }
 }
