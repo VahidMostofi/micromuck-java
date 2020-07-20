@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+  gateway:
+    image: vahidmostofi/micromuck:dev-v1
+    restart: always
+    ports:
+      - "9080:8080"
+    environment:
+      - SERVICE_NAME=gateway
+      - SEED=2
+      - ENDPOINTS=login|999983|100;http://auth:8080/login|999983||getbook|999983|100;http://books:8080/getbook|999983||editbook|999983|100;http://books:8080/editbook|999983
+      - JAEGER_AGENT_HOST=jaeger
+    depends_on:
+      - jaeger
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 3G
+        reservations:
+          cpus: "1"
+          memory: 2G
+  ################################################
+  auth:
+    image: vahidmostofi/micromuck:dev-v1
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - SERVICE_NAME=auth
+      - SEED=5
+      - ENDPOINTS=login|999983|_|999983
+      - JAEGER_AGENT_HOST=jaeger
+    depends_on:
+      - jaeger
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 3G
+        reservations:
+          cpus: "1"
+          memory: 2G
+  ################################################
+  books:
+    image: vahidmostofi/micromuck:dev-v1
+    restart: always
+    ports:
+      - "8082:8080"
+    environment:
+      - SERVICE_NAME=books
+      - SEED=9
+      - ENDPOINTS=getbook|999983|_|999983||editbook|999983|_|999983
+      - JAEGER_AGENT_HOST=jaeger
+    depends_on:
+      - jaeger
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 3G
+        reservations:
+          cpus: "1"
+          memory: 2G
+  ################################################
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "5775:5775/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 8G
+        reservations:
+          cpus: "1"
+          memory: 6G

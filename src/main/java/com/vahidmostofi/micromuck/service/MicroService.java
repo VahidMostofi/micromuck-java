@@ -12,27 +12,13 @@ import org.springframework.stereotype.Service;
 
 
 import javax.annotation.PostConstruct;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class MicroService {
 
     @Autowired
     private Environment env;
-
-    private MicroEndpoint[] microEndpoints;
-
-
-    @Value("${app.endpoints}")
-    private String envEndpoints;
-
-    @Value("${app.pre_request}")
-    private String preRequestStr;
-
-    @Value("${app.post_request}")
-    private String postRequestStr;
 
     @Value("${app.seed}")
     private String seedStr;
@@ -41,45 +27,23 @@ public class MicroService {
 
     private OkHttpClient httpClient;
 
-
     @PostConstruct
-    private void init(){
-        r = new Random();
-        r.setSeed(Long.parseLong(seedStr));
-
-        // parse endpoints
-        envEndpoints = envEndpoints.trim();
-        if (envEndpoints.length() >1){
-            microEndpoints = new MicroEndpoint[envEndpoints.split("_").length];
-            String[] endpointsStrs = envEndpoints.split("_");
-            int i = 0;
-
-            for(String endpointStr : endpointsStrs){
-                int prob = Integer.parseInt(endpointStr.split(";")[0]);
-                String path = endpointStr.split(";")[1];
-                microEndpoints[i++] = new MicroEndpoint(prob, path);
-            }
-        }
-
+    public void init(){
+        r = new Random(Long.parseLong(seedStr));
         httpClient = new OkHttpClient();
-
     }
 
-    public void PreRequestBehaviour(){
-        behave(preRequestStr);
-    }
-
-    public void MakeRequest(io.opentracing.Tracer tracer, Span span){
-        if (microEndpoints == null){
+    public void MakeRequest(io.opentracing.Tracer tracer, Span span, ArrayList<MicroEndpoint> microEndpoints){
+        if (microEndpoints.size() == 0){
             return;
         }
 
         String url = null;
         int randomValue = r.nextInt(100);
         int sumProb = 0;
-        for(MicroEndpoint me : this.microEndpoints){
+        for(MicroEndpoint me : microEndpoints){
             sumProb += me.getProb();
-//            System.out.println(randomValue + " " + sumProb);
+            System.out.println(randomValue + " " + sumProb);
             if (randomValue < sumProb){
                 url = me.getPath();
                 break;
@@ -109,15 +73,9 @@ public class MicroService {
         }
     }
 
-    public void PostRequestBehaviour(){
-        behave(postRequestStr);
-    }
 
-    private void behave(String code){
-        if (code.startsWith("uniform")){ //uniform(100,200)
-            int n = Integer.parseInt(code);
-            isPrime(n);
-        }
+    public void behave(int n){
+        isPrime(n);
     }
 
     public class RequestBuilderCarrier implements io.opentracing.propagation.TextMap {
