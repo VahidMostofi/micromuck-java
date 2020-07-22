@@ -1,0 +1,1 @@
+k6 run --out json=lg_output.json --no-summary --summary-export summary.json scripts/type1.js
